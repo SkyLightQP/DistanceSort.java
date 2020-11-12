@@ -2,15 +2,25 @@ package info.sinamon.mapsort.data;
 
 import info.sinamon.mapsort.enums.Category;
 
-public class PlaceData implements Comparable<PlaceData> {
+public class PlaceData {
+    private String name;
     private double latitude;
     private double longitude;
     private Category category;
 
-    public PlaceData(double latitude, double longitude, Category category) {
+    public PlaceData(String name, double latitude, double longitude, Category category) {
+        this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public double getLatitude() {
@@ -45,15 +55,10 @@ public class PlaceData implements Comparable<PlaceData> {
     }
 
     @Override
-    public int compareTo(PlaceData o) {
-        final double distanceDelta = getDistance(this) - getDistance(o);
-        return distanceDelta < 0 ? -1 : 1;
-    }
-
-    @Override
     public String toString() {
         return "PlaceData{" +
-                "latitude=" + latitude +
+                "name='" + name + '\'' +
+                ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 ", category=" + category +
                 '}';

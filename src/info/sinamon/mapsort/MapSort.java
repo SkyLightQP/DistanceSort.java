@@ -4,7 +4,9 @@ import info.sinamon.mapsort.data.PlaceData;
 import info.sinamon.mapsort.data.PlaceDistance;
 import info.sinamon.mapsort.data.UserInput;
 import info.sinamon.mapsort.enums.Category;
+import info.sinamon.mapsort.enums.MapType;
 import info.sinamon.mapsort.services.Distance;
+import info.sinamon.mapsort.services.Graph;
 import info.sinamon.mapsort.services.SortPlace;
 import info.sinamon.mapsort.store.MapInfo;
 
@@ -13,10 +15,12 @@ import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class MapSort {
-    private static final int R = 10;
+    // 사용자 입력을 받기 위해 스캐너 인스턴스를 만듭니다.
     private static final Scanner scan = new Scanner(System.in);
+    // 지도 출력을 위한 그래프 인스턴스를 만듭니다.
+    private static final Graph graph = new Graph(10);
+    // 각 장소의 거리를 구하기 위해 거리 인스턴스를 만듭니다.
     private static final Distance sp = new Distance();
-    private static final int[][] graph = new int[360 / R][360 / R];
 
     // 초기 장소 데이터를 등록합니다.
     static {
@@ -46,9 +50,11 @@ public class MapSort {
 
         // 입력 받은 값으로 내 위치 객체를 만들어 냅니다.
         PlaceData myLocation = new PlaceData("LOCATION", input.lat, input.longg, input.category);
-        int myX = (int) (input.lat / R);
-        int myY = (int) (input.longg / R);
-        graph[myY][myX] = -2;
+        // 지도의 척도를 이용하여 내 X, Y 위치를 구합니다.
+        int myX = (int) (input.lat / graph.getR());
+        int myY = (int) (input.longg / graph.getR());
+        // 그래프에 내 위치를 기록합니다.
+        graph.setMark(myX, myY, MapType.MY.getValue());
 
         // 내 위치를 기준으로 장소들의 거리를 구합니다.
         List<PlaceDistance> list = sp.getDistanceByMySelf(myLocation);
@@ -61,45 +67,18 @@ public class MapSort {
         // 정렬한 거리 데이터를 저장합니다.
         List<PlaceDistance> sortedList = new SortPlace().sort(filteredList);
 
-        boolean isNearBy = false;
-        for (int i = 0; i < sortedList.size(); i++) {
-            PlaceDistance distance = sortedList.get(i);
-            int value = (int) Math.round(distance.getDistanceToOther());
-//            System.out.println(distance.getName() + " " + value);
+        // 거리별로 정렬된 첫번째 장소, 즉 가장 가까운 장소를 가져옵니다.
+        PlaceDistance near = sortedList.get(0);
+        // 가장 가까운 곳의 정보를 출력합니다.
+        System.out.println();
+        System.out.println(ColorCode.YELLOW  + near.getCategory() + " 카테고리의 최단거리 장소는 " + near.getName() + "이며 거리는 " + (int) near.getDistanceToOther() + "입니다." + ColorCode.RESET);
+        // 지도 범례를 출력합니다.
+        System.out.println(ColorCode.RED + "● : 현위치, " + ColorCode.GREEN + "■ : 최단 거리" + ColorCode.RESET);
 
-            int x = (int) (distance.getLatitude() / R);
-            int y = (int) (distance.getLongitude() / R);
-            if (!isNearBy) {
-                graph[y][x] = -1;
-                isNearBy = true;
-            } else {
-                graph[y][x] += 1;
-            }
-        }
-
-        for (int i = 0; i < 360 / R; i++) {
-            for (int j = 0; j < 360 / R; j++) {
-                if (graph[i][j] == -1) {
-                    System.out.print(ColorCode.GREEN);
-                    System.out.print("■");
-                }
-                if (graph[i][j] == -2) {
-                    System.out.print(ColorCode.RED);
-                    System.out.print("■");
-                }
-                if (graph[i][j] == 0) {
-                    System.out.print("□");
-                }
-                if (graph[i][j] == 1) {
-                    System.out.print("■");
-                }
-                if (graph[i][j] > 1) {
-                    System.out.print("▣");
-                }
-                System.out.print(ColorCode.RESET);
-            }
-            System.out.println();
-        }
+        // 정렬된 데이터로 그래프 전처리 과정을 합니다.
+        graph.preprocessGraphData(sortedList);
+        // 그래프를 출력합니다.
+        graph.printMap();
     }
 
     private static UserInput scanInput() throws IllegalArgumentException {

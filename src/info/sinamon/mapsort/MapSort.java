@@ -28,13 +28,13 @@ public class MapSort {
         MapInfo.putMap("테스트2", new PlaceData("테스트2", 11.10, 11.10, Category.직업));
         MapInfo.putMap("테스트3", new PlaceData("테스트3", 30.10, 50.10, Category.직업));
         MapInfo.putMap("테스트4", new PlaceData("테스트4", 40.10, 40.10, Category.직업));
-        MapInfo.putMap("테스트4-1", new PlaceData("테스트8", 37.10, 70.10, Category.의료));
+        MapInfo.putMap("테스트4-1", new PlaceData("테스트4-1", 37.10, 70.10, Category.의료));
         MapInfo.putMap("테스트5", new PlaceData("테스트5", 20.10, 50.10, Category.직업));
         MapInfo.putMap("테스트6", new PlaceData("테스트6", 60.10, 50.10, Category.직업));
         MapInfo.putMap("테스트6-1", new PlaceData("테스트6", 60.10, 50.10, Category.직업));
         MapInfo.putMap("테스트7", new PlaceData("테스트7", 90.10, 70.10, Category.직업));
         MapInfo.putMap("테스트8", new PlaceData("테스트8", 80.10, 40.10, Category.생산품판매));
-        MapInfo.putMap("테스트8", new PlaceData("테스트8", 110.10, 80.10, Category.의료));
+        MapInfo.putMap("테스트9", new PlaceData("테스트9", 110.10, 80.10, Category.의료));
     }
 
     public static void main(String[] args) {
